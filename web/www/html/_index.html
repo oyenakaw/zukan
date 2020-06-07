@@ -1,0 +1,73 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ioredis@4.14.1/built/index.min.js"></script>
+
+<div id="app">
+  <p>Upload</p>
+  <div><input type="file" @change="selectedFile"></div>
+  <div><img v-show="uploadedImage" :src="uploadedImage" /></div>
+  <div><button class="btn btn-info" type="button" @click="onSubmit">upload</button></div>
+</div>
+<div id="app2">label: {{ label_image }}</div>
+
+
+<script>
+
+var app = new Vue({
+  el: '#app',
+  data () {
+    return {
+      files: null,
+      label_image: null,
+      uploadedImage: ''
+    }
+  },
+  methods: {
+    selectedFile (e) {
+      this.files = e.target.files[0]
+      this.createImage(this.files)
+    },
+    onSubmit () {
+      const _redis = new IORedis.Redis({
+        port: 6379, // Redis port
+        host: "redis_local", // Redis host
+        family: 4, // 4 (IPv4) or 6 (IPv6)
+        db: 0
+      });
+      _redis.set('binary_image', this.files)
+      _redis.disconnect();
+    },
+    createImage (file) {
+      let reader = new FileReader()
+      reader.onload = (e) => {
+        this.uploadedImage = e.target.result
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+})
+
+var app2 = new Vue({
+  el: '#app2',
+  data () {
+    return {
+      label_image: null
+    }
+  },
+  created () {
+    const subs = new IORedis.Redis({
+      port: 6379, // Redis port
+      host: "redis_local", // Redis host
+      family: 4, // 4 (IPv4) or 6 (IPv6)
+      db: 0
+    });
+    subs.subscribe("label", function(err, count) {
+      
+    });
+    subs.on("label", function(channel, message) {
+      this.label_image = message
+    });
+  }
+})
+</script>
