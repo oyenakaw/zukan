@@ -37,8 +37,8 @@ jobs:
       - run:
         name: Push Image Web
         command: |
-        # docker tag ${WEB_REPO}
-        echo Push Image Web
+          # docker tag ${WEB_REPO}
+          echo Push Image Web
       - run:
         name: Push Image Api
         command: |
