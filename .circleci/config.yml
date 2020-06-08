@@ -9,7 +9,9 @@ jobs:
     executor: default-executor
     steps:
       - checkout
-      - run: echo "Build Image Web"
+      - run:
+          command: >
+            echo "Build Image Web"
   deploy-job:
     executor: default-executor
     steps:
