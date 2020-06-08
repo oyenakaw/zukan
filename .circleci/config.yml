@@ -10,6 +10,7 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Build Image Web
           command: >
             echo "Build Image Web"
   deploy-job:
