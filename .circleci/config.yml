@@ -9,41 +9,41 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build Image Web
-          command: |
-            # docker build -t ${WEB_IMAGE_TAG} ./web
-            echo Build Image Web
+        name: Build Image Web
+        command: |
+          # docker build -t ${WEB_IMAGE_TAG} ./web
+          echo Build Image Web
       - run:
-          name: Build Image Api
-          command: |
-            # docker build -t ${API_IMAGE_TAG} ./backend
-            echo Build Image Api
+        name: Build Image Api
+        command: |
+          # docker build -t ${API_IMAGE_TAG} ./backend
+          echo Build Image Api
   deploy-job:
     executor:
       name: default
     steps:
       - run:
-          name: Setup AWS CLI
-          command: |
-            # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            # unzip awscliv2.zip
-            # sudo ./aws/install
-            echo Setup AWS CLI
+        name: Setup AWS CLI
+        command: |
+          # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          # unzip awscliv2.zip
+          # sudo ./aws/install
+          echo Setup AWS CLI
       - run:
-          name: Auth Docker Client
-          commnad: |
-            # aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
-            echo Auth Docker Client
+        name: Auth Docker Client
+        commnad: |
+          # aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
+          echo Auth Docker Client
       - run:
-          name: Push Image Web
-          command: |
-          # docker tag ${WEB_REPO}
-          echo Push Image Web
+        name: Push Image Web
+        command: |
+        # docker tag ${WEB_REPO}
+        echo Push Image Web
       - run:
-          name: Push Image Api
-          command: |
-            # docker tag ${API_REPO}
-            echo Push Image Api
+        name: Push Image Api
+        command: |
+          # docker tag ${API_REPO}
+          echo Push Image Api
 workflows:
   build-and-deploy:
     jobs:
