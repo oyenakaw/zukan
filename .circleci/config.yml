@@ -1,7 +1,9 @@
 version: 2.1
+
 executors:
   default:
     machine: true
+
 jobs:
   build-job:
     executor:
@@ -10,13 +12,11 @@ jobs:
       - checkout
       - run:
         name: Build Image Web
-        command: |
-          # docker build -t ${WEB_IMAGE_TAG} ./web
+        command: >
           echo Build Image Web
       - run:
         name: Build Image Api
-        command: |
-          # docker build -t ${API_IMAGE_TAG} ./backend
+        command: >
           echo Build Image Api
   deploy-job:
     executor:
@@ -24,27 +24,23 @@ jobs:
     steps:
       - run:
         name: Setup AWS CLI
-        command: |
-          # curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          # unzip awscliv2.zip
-          # sudo ./aws/install
+        command: >
           echo Setup AWS CLI
       - run:
         name: Auth Docker Client
-        commnad: |
-          # aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
+        commnad: >
           echo Auth Docker Client
       - run:
         name: Push Image Web
-        command: |
-          # docker tag ${WEB_REPO}
+        command: >
           echo Push Image Web
       - run:
         name: Push Image Api
-        command: |
-          # docker tag ${API_REPO}
+        command: >
           echo Push Image Api
+
 workflows:
+  version: 2
   build-and-deploy:
     jobs:
       - build-job
@@ -53,5 +49,4 @@ workflows:
             - build-job
           filters:
             branches:
-              only:
-                - master
+              only: master
