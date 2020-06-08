@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    docker:
-        - image: ../backend
+    machine: true
     steps:
-        - checkout
+      - checkout
+      - run: docker build -f "./web"
