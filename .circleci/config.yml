@@ -1,13 +1,12 @@
 version: 2.1
 
 executors:
-  default:
+  default-executor:
     machine: true
 
 jobs:
   build-job:
-    executor:
-      name: default
+    executor: default-executor
     steps:
       - checkout
       - run:
@@ -19,8 +18,7 @@ jobs:
         command: >
           echo "Build Image Api"
   deploy-job:
-    executor:
-      name: default
+    executor: default-executor
     steps:
       - run:
         name: Setup AWS CLI
@@ -40,7 +38,7 @@ jobs:
           echo "Push Image Api"
 
 workflows:
-  version: 2
+  version: 2.1
   build-and-deploy:
     jobs:
       - build-job
