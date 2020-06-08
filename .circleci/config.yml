@@ -1,7 +1,53 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+executors:
+  default:
     machine: true
+
+jobs:
+  build-job:
+    executor:
+      name: default
     steps:
       - checkout
-      - run: docker build ./web
+      - run:
+        name: Build Image Web
+        command: |
+          docker build -t ${WEB_IMAGE_TAG} ./web
+      - run:
+        name: Build Image Api
+        command: |
+          docker build -t ${API_IMAGE_TAG} ./backend
+  deploy-job:
+    executor:
+      name: default
+    steps:
+      - run:
+        name: Setup AWS CLI
+        command: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+      - run:
+        name: Auth Docker Client
+        commnad: |
+          aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_AUTH_TOKEN}
+      - run:
+        name: Push Image Web
+        command: |
+          docker tag ${WEB_REPO}
+      - run:
+        name: Push Image Api
+        command: |
+          docker tag ${API_REPO}
+
+workflows:
+  build-and-deploy:
+    jobs:
+      - build-job
+      - deploy-job:
+        requires:
+          - build-job
+        filters:
+          branches:
+            only:
+              - master
