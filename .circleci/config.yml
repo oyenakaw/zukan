@@ -12,11 +12,11 @@ jobs:
       - run:
           name: Build Image Web
           command: >
-            docker build -t ${WEB_IMAGE_TAG} ./web
+            echo ${WEB_IMAGE_TAG}
       - run:
           name: Build Image Api
           command: >
-            docker build -t ${API_IMAGE_TAG} ./backend
+            echo "Build Image Api"
   deploy-job:
     executor: default-executor
     steps:
