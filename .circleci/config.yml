@@ -11,33 +11,33 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Build Image Web
-        command: >
-          echo Build Image Web
+          name: Build Image Web
+          command: >
+            echo Build Image Web
       - run:
-        name: Build Image Api
-        command: >
-          echo Build Image Api
+          name: Build Image Api
+          command: >
+            echo Build Image Api
   deploy-job:
     executor:
       name: default
     steps:
       - run:
-        name: Setup AWS CLI
-        command: >
-          echo Setup AWS CLI
+          name: Setup AWS CLI
+          command: >
+            echo Setup AWS CLI
       - run:
-        name: Auth Docker Client
-        commnad: >
-          echo Auth Docker Client
+          name: Auth Docker Client
+          commnad: >
+            echo Auth Docker Client
       - run:
-        name: Push Image Web
-        command: >
-          echo Push Image Web
+          name: Push Image Web
+          command: >
+            echo Push Image Web
       - run:
-        name: Push Image Api
-        command: >
-          echo Push Image Api
+          name: Push Image Api
+          command: >
+            echo Push Image Api
 
 workflows:
   version: 2
