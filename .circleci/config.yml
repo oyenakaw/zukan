@@ -26,6 +26,20 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
+      - run:
+          name: Auth Docker Client
+          command: >
+            aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
+      - run:
+          name: Push Image Web
+          command: |
+            docker tag ${WEB_IMAGE_TAG}:latest ${WEB_IMAGE_URI}
+            docker push ${WEB_IMAGE_URI}
+      - run:
+          name: Push Image Api
+          command: |
+            docker tag ${API_IMAGE_TAG}:latest ${API_IMAGE_URI}
+            docker push ${API_IMAGE_URI}
 
 workflows:
   version: 2.1
