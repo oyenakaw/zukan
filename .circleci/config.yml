@@ -5,20 +5,14 @@ executors:
     machine: true
 
 jobs:
-  setup-job:
+  build-job:
     executor: default-executor
     steps:
       - checkout
-  build-web-job:
-    executor: default-executor
-    steps:
       - run:
           name: Build Image Web
           command: >
             docker build -t ${WEB_IMAGE_TAG} ./web
-  build-api-job:
-    executor: default-executor
-    steps:
       - run:
           name: Build Image Api
           command: >
@@ -54,17 +48,10 @@ workflows:
   version: 2.1
   build-and-deploy:
     jobs:
-      - setup-job
-      - build-web-job:
-          requires:
-            - setup-job
-      - build-api-job:
-          requires:
-            - setup-job
+      - build-job:
       - deploy-job:
           requires:
-            - build-web-job
-            - build-api-job
+            - build-job
           filters:
             branches:
               only: master
