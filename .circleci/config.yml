@@ -48,7 +48,7 @@ workflows:
   version: 2.1
   build-and-deploy:
     jobs:
-      - build-job:
+      - build-job
       - deploy-job:
           requires:
             - build-job
