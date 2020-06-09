@@ -11,6 +11,7 @@ jobs:
       - checkout
   build-web-job:
     executor: default-executor
+    steps:
       - run:
           name: Build Image Web
           command: >
