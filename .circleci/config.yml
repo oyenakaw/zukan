@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Login Docker
           command: |
-            eval $(aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN})
+            aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
       - run:
           name: Push Image Web
           command: |
