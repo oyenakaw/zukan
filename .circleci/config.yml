@@ -11,12 +11,17 @@ jobs:
       - checkout
       - run:
           name: Build Image Web
-          command: >
+          command: |
             docker build -t ${WEB_IMAGE_TAG} ./web
       - run:
           name: Build Image Api
-          command: >
+          command: |
             docker build -t ${API_IMAGE_TAG} ./backend
+      - run:
+          name: Save images
+          command: |
+            mkdir -p /tmp/docker
+            docker images
   deploy-job:
     executor: default-executor
     steps:
@@ -32,7 +37,7 @@ jobs:
             sudo su -
             aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
             aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
-            aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
+            eval $(aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN})
       - run:
           name: Push Image Web
           command: |
