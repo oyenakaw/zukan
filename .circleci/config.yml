@@ -1,13 +1,77 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+
+executors:
+  default-executor:
+    machine: true
+
+jobs:
+  build-job:
+    executor: default-executor
+    steps:
+      - checkout
+      - run:
+          name: Build Image Web
+          command: |
+            docker build -t ${WEB_IMAGE_TAG} ./web
+      - run:
+          name: Build Image Api
+          command: |
+            docker build -t ${API_IMAGE_TAG} ./backend
+      - run:
+          name: Save Images
+          command: |
+            mkdir -p /tmp/docker
+            docker save ${WEB_IMAGE_TAG}:latest -o /tmp/docker/web_image
+            docker save ${API_IMAGE_TAG}:latest -o /tmp/docker/api_image
+      - persist_to_workspace:
+          root: /tmp/docker
+          paths:
+            - web_image
+            - api_image
+  deploy-job:
+    executor: default-executor
+    steps:
+      - attach_workspace:
+          at: /tmp/docker
+      - run:
+          name: Load Images
+          command: |
+            docker load -i /tmp/docker/web_image
+            docker load -i /tmp/docker/api_image
+      - run:
+          name: Setup AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Set Auth Docker Client
+          command: |
+            aws configure set aws_access_key_id ${AWS_ACCESS_KEY}
+            aws configure set aws_secret_access_key ${AWS_SECRET_KEY}
+      - run:
+          name: Login Docker
+          command: |
+            aws ecr get-login-password --region ${AWS_REGION} | docker login --username ${AWS_USER} --password-stdin ${AWS_AUTH_TOKEN}
+      - run:
+          name: Push Image Web
+          command: |
+            docker tag ${WEB_IMAGE_TAG}:latest ${WEB_IMAGE_URI}
+            docker push ${WEB_IMAGE_URI}
+      - run:
+          name: Push Image Api
+          command: |
+            docker tag ${API_IMAGE_TAG}:latest ${API_IMAGE_URI}
+            docker push ${API_IMAGE_URI}
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  version: 2.1
+  build-and-deploy:
     jobs:
-      - welcome/run
+      - build-job
+      - deploy-job:
+          requires:
+            - build-job
+          filters:
+            branches:
+              only: master
