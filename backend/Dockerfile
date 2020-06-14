@@ -1,7 +1,7 @@
 FROM python:3.7
 RUN pip install --upgrade pip
 ENV PORT 3001
-WORKDIR /usr/src/app
+WORKDIR /usr/local/app
 COPY . /usr/local/app
 RUN pip install -r requirements.txt
 
