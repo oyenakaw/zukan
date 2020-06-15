@@ -1,0 +1,14 @@
+version: '3'
+services:
+        front:
+                build: ./web
+                container_name: "zukan-web"
+                ports:
+                        - 80:80
+                depends_on:
+                        - back
+        back:
+                container_name: "zukan-api"
+                build: ./backend
+                ports:
+                        - 3001:3001

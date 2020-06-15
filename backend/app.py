@@ -26,7 +26,7 @@ with open('resources/imagenet_class_index.json','r',encoding="utf-8") as f:
     _data = json.load(f)
     class_names_to_ja_from_en = dict(zip(list(row['en'] for row in _data),list(row['ja'] for row in _data)))
 
-graph = tf.get_default_graph()
+graph = tf.compat.v1.get_default_graph()
 model = ResNet50(weights='imagenet')
 
 def _input(binary_image):
