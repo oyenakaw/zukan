@@ -63,6 +63,10 @@ jobs:
           command: |
             docker tag ${API_IMAGE_TAG}:latest ${API_IMAGE_URI}
             docker push ${API_IMAGE_URI}
+      - run:
+          name: Update Service
+          command: |
+            aws ecs update-service --service ${AWS_SERVICE_NAME} --task-definition ${AWS_TASK_NAME}
 
 workflows:
   version: 2.1
