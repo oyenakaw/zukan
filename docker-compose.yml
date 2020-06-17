@@ -3,8 +3,9 @@ services:
         front:
                 build: ./web
                 container_name: "zukan-web"
-                ports:
-                        - 80:80
+                expose:
+                        - "80"
+                network_mode: host
                 depends_on:
                         - back
         back:
