@@ -13,3 +13,20 @@ services:
                 build: ./backend
                 ports:
                         - 3001:3001
+                environment: 
+                        - DB_HOST=zukan-db
+                        - DB_PORT=3306
+                        - DB_USER_NAME=api
+                        - DB_USER_PASSWORD=passw0rd
+                        - DB_DATABASE_NAME=zukan_db
+                depends_on:
+                        - db              
+        db:
+                container_name: "zukan-db"
+                build: ./db
+                environment:
+                        - MYSQL_ROOT_PASSWORD=passw0rd
+                volumes:
+                        - ./db/initdb.d:/docker-entrypoint-initdb.d
+                ports:
+                        - 3306:3306
